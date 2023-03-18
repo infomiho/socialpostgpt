@@ -7,19 +7,33 @@ import {
   Spinner,
   Text,
   VStack,
+  AspectRatio,
 } from "@chakra-ui/react";
-import { Image as ImageEntity, Result, UnsplashAuthor } from "@wasp/entities";
+import {
+  Image as ImageEntity,
+  Result,
+  ImageAuthor,
+  Generation,
+} from "@wasp/entities";
 import { useQuery } from "@wasp/queries";
 import getResult from "@wasp/queries/getResult";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ImageProviderLink } from "../components/ImageProviderLink";
 
 const ResultPage = () => {
   const { generationId } = useParams<{ generationId: string }>();
   const [isFetched, setIsFetched] = useState(false);
+  const [currentImage, setCurrentImage] = useState<
+    (ImageEntity & { author: ImageAuthor }) | null
+  >(null);
   const { data: result, isLoading } = useQuery<
     { generationId: string | null },
-    Result & { images?: (ImageEntity & { author: UnsplashAuthor })[] }
+    Generation & {
+      result:
+        | (Result & { images?: (ImageEntity & { author: ImageAuthor })[] })
+        | null;
+    }
   >(
     getResult,
     { generationId },
@@ -28,41 +42,58 @@ const ResultPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   function nextImage() {
-    if (!result?.images) {
-      return;
-    }
-    setCurrentImageIndex((currentImageIndex + 1) % result.images.length);
-  }
-
-  function previousImage() {
-    if (!result?.images) {
+    if (!result?.result?.images) {
       return;
     }
     setCurrentImageIndex(
-      (currentImageIndex + result.images.length - 1) % result.images.length
+      (currentImageIndex + 1) % result.result?.images.length
+    );
+  }
+
+  function previousImage() {
+    if (!result?.result?.images) {
+      return;
+    }
+    setCurrentImageIndex(
+      (currentImageIndex + result.result.images.length - 1) %
+        result.result.images.length
     );
   }
 
   useEffect(() => {
-    if (result) {
+    if (result?.result) {
       setIsFetched(true);
     }
   }, [result]);
 
+  useEffect(() => {
+    if (result?.result?.images) {
+      setCurrentImage(result.result.images[currentImageIndex]);
+    }
+  }, [result, currentImageIndex]);
+
   return (
     <VStack p={8}>
-      {(isLoading || !result) && <Spinner />}
-      {result && (
+      {(isLoading || result?.status === "pending") && <Spinner />}
+      {result && result.result && (
         <VStack alignItems="flex-start">
           {/* <Text color="gray.500" fontSize="sm">
             Result ID: {result.generationId}
           </Text> */}
           <Box boxShadow="base" borderRadius="md" p={6} mb={4}>
-            <Text colorScheme="brand">{result.description}</Text>
-            {result.images && (
+            <Text colorScheme="brand">{result.result.description}</Text>
+            {currentImage && (
               <Box>
-                <Box style={{ position: "relative" }}>
-                  {result.images[currentImageIndex].downloadUrl && (
+                <Box style={{ position: "relative" }} my={2}>
+                  <AspectRatio ratio={16 / 9}>
+                    <Image
+                      src={currentImage.url}
+                      alt={result.result.searchQuery}
+                      objectFit="cover"
+                      borderRadius="md"
+                    />
+                  </AspectRatio>
+                  {currentImage.downloadUrl && (
                     <Button
                       size="sm"
                       style={{
@@ -71,41 +102,27 @@ const ResultPage = () => {
                         right: "0.5rem",
                       }}
                     >
-                      <a
-                        href={result.images[currentImageIndex].downloadUrl}
-                        target="_blank"
-                      >
+                      <a href={currentImage.downloadUrl} target="_blank">
                         Download
                       </a>
                     </Button>
                   )}
-                  <Image
-                    src={result.images[currentImageIndex].url}
-                    my={2}
-                    borderRadius="md"
-                  />
                 </Box>
                 <Text fontSize="xs" color="gray.600">
                   Photo by{" "}
-                  <Link href={result.images[currentImageIndex].author.url}>
-                    {result.images[currentImageIndex].author.name}
+                  <Link href={currentImage.author.url}>
+                    {currentImage.author.name}
                   </Link>{" "}
-                  on{" "}
-                  <Link href="https://unsplash.com/?utm_source=your_app_name&utm_medium=referral">
-                    Unsplash
-                  </Link>
+                  on <ImageProviderLink />
                 </Text>
               </Box>
             )}
-            {/* {result.images?.map((image) => (
-              <Image src={image.url} mt={2} borderRadius="md" />
-            ))} */}
           </Box>
           <Box>
             <Text mb={2} fontSize="sm" color="gray.500">
               We found multiple pictures using the search query{" "}
               <Text as="span" color="brand.700">
-                "{result.unsplashSearchQuery}"
+                "{result.result.searchQuery}"
               </Text>
               , pick the best one.
             </Text>
@@ -120,10 +137,26 @@ const ResultPage = () => {
           </Box>
         </VStack>
       )}
-      {!isLoading && !result && (
+      {result?.status === "pending" && (
+        <Text textAlign="center">
+          <strong>
+            You are in the queue ✨ <br />
+          </strong>
+          The page will refresh when your result is ready.
+        </Text>
+      )}
+      {result?.status === "inProgress" && (
+        <Text textAlign="center">
+          <strong>We are generating your result 🏃‍♂️</strong>
+          <br />
+          We'll recheck if it's done every few seconds.
+        </Text>
+      )}
+      {result && result.status === "failed" && (
         <Text>
-          We are generating your result. We'll recheck if it's done every few
-          seconds.
+          <strong>We couldn't generate your result ❌</strong>
+          <br />
+          Please try again inputing a different idea.
         </Text>
       )}
     </VStack>

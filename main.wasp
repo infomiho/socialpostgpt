@@ -18,7 +18,8 @@ app socialpostgpt {
     ("@emotion/styled", "11.10.6"),
     ("framer-motion", "6.5.1"),
     ("react-hook-form", "7.43.1"),
-    ("@fontsource/inter", "4.5.15")
+    ("@fontsource/inter", "4.5.15"),
+    ("pexels", "1.4.0")
   ],
 }
 
@@ -56,6 +57,9 @@ job generateResult {
 entity Generation {=psl
   id String @id @unique @default(uuid())
   prompt String
+  status String @default("pending")
+  retryTimes Int @default(0)
+  createdAt DateTime @default(now())
   resultId String?
   result Result?
 psl=}
@@ -63,7 +67,7 @@ psl=}
 entity Result {=psl
   id String @id @unique @default(uuid())
   description String
-  unsplashSearchQuery String
+  searchQuery String
   images Image[]
   generationId String @unique
   generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
@@ -73,14 +77,15 @@ entity Image {=psl
   id String @id @unique @default(uuid())
   url String
   downloadUrl String @default("")
-  unsplashId String
+  providerId String
+  provider String
   authorId String
-  author UnsplashAuthor @relation(fields: [authorId], references: [id])
+  author ImageAuthor @relation(fields: [authorId], references: [id])
   resultId String
   result Result @relation(fields: [resultId], references: [id])
 psl=}
 
-entity UnsplashAuthor {=psl
+entity ImageAuthor {=psl
   id String @id @unique @default(uuid())
   name String
   url String

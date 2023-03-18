@@ -9,6 +9,8 @@ import { Link as RouterLink } from "react-router-dom";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/900.css";
 
+import { ImageProviderLink } from "./components/ImageProviderLink";
+
 import { theme } from "./theme";
 
 export function App({ children }) {
@@ -40,8 +42,15 @@ export function App({ children }) {
         {children}
         <HStack justifyContent="center">
           <p>
-            Powered by <Link href="https://wasp-lang.dev">Wasp</Link>,{" "}
-            <Link>OpenAI</Link> and <Link>Unsplash</Link>.
+            Powered by{" "}
+            <Link href="https://wasp-lang.dev" target="_blank">
+              Wasp
+            </Link>
+            ,{" "}
+            <Link href="https://openai.com/" target="_blank">
+              OpenAI
+            </Link>{" "}
+            and <ImageProviderLink />.
           </p>
         </HStack>
       </Container>

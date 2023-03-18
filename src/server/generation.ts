@@ -1,6 +1,6 @@
 import { SubmitPrompt } from "@wasp/actions/types";
 import { GetResult } from "@wasp/queries/types";
-import { Result } from "@wasp/entities";
+import { Generation } from "@wasp/entities";
 
 import { generateResult } from "@wasp/jobs/generateResult.js";
 
@@ -14,7 +14,6 @@ export const submitPrompt: SubmitPrompt<
         prompt: args.description.slice(0, 150),
       },
     });
-    console.log("Generation created:", generation);
     generateResult.submit({ generationId: generation.id });
     return { success: true, generationId: generation.id };
   } catch (e) {
@@ -23,7 +22,7 @@ export const submitPrompt: SubmitPrompt<
 };
 export const getResult: GetResult<
   { generationId: string },
-  Result | null
+  Generation | null
 > = async (args, context) => {
   const generation = await context.entities.Generation.findUnique({
     where: { id: args.generationId },
@@ -38,5 +37,5 @@ export const getResult: GetResult<
   if (!generation) {
     return null;
   }
-  return generation.result;
+  return generation;
 };
