@@ -137,6 +137,15 @@ const colors = {
 };
 
 export const theme = extendTheme({
+  styles: {
+    global: {
+      // styles for the `body`
+      body: {
+        bg: "brand.50",
+        color: "gray.900",
+      },
+    },
+  },
   fonts: {
     heading: "Inter",
     body: "Inter",
@@ -144,13 +153,14 @@ export const theme = extendTheme({
   colors,
   components: {
     Input: {
-        baseStyle: {
-            field: {
-                _focus: {
-                    borderColor: "brand.800",
-                }
-            }
-        }
+      baseStyle: {
+        field: {
+          bg: "white",
+          _focus: {
+            borderColor: "brand.800",
+          },
+        },
+      },
     },
     Link: {
       baseStyle: {
@@ -158,6 +168,32 @@ export const theme = extendTheme({
         _hover: {
           textDecoration: "none",
           color: "brand.900",
+        },
+      },
+    },
+    Checkbox: {
+      baseStyle: {
+        container: {
+          boxShadow: "lg",
+          borderRadius: 3,
+          padding: 3,
+          bg: "white",
+        },
+        control: {
+          _focus: {
+            borderColor: "brand.800",
+          },
+          _hover: {
+            borderColor: "brand.800",
+          },
+          _checked: {
+            bg: "brand.800",
+            borderColor: "brand.800",
+            _hover: {
+              bg: "brand.800",
+              borderColor: "brand.800",
+            },
+          },
         },
       },
     },

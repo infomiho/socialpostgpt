@@ -73,14 +73,53 @@ const ResultPage = () => {
   }, [result, currentImageIndex]);
 
   return (
-    <VStack p={8}>
-      {(isLoading || result?.status === "pending") && <Spinner />}
+    <VStack px={8}>
+      {(!result || !result.result) && (
+        <Box
+          boxShadow="lg"
+          bg="white"
+          padding={6}
+          borderRadius="lg"
+          textAlign="center"
+        >
+          {(isLoading || result?.status !== "done") && <Spinner />}
+          {result?.status === "pending" && (
+            <Text textAlign="center">
+              <strong>
+                You are in the queue ✨ <br />
+              </strong>
+              The page will refresh when your result is ready.
+            </Text>
+          )}
+          {result?.status === "inProgress" && (
+            <Text textAlign="center">
+              <strong>We are generating your result 🏃‍♂️</strong>
+              <br />
+              The page will refresh when your result is ready.
+            </Text>
+          )}
+          {result && result.status === "failed" && (
+            <Text>
+              <strong>We couldn't generate your result ❌</strong>
+              <br />
+              Please try again inputing a different idea.
+            </Text>
+          )}
+        </Box>
+      )}
       {result && result.result && (
         <VStack alignItems="flex-start">
           {/* <Text color="gray.500" fontSize="sm">
             Result ID: {result.generationId}
           </Text> */}
-          <Box boxShadow="base" borderRadius="md" p={6} mb={4}>
+          <Box
+            boxShadow="base"
+            borderRadius="md"
+            p={6}
+            mb={4}
+            bg="white"
+            width="full"
+          >
             <Text colorScheme="brand">{result.result.description}</Text>
             {currentImage && (
               <Box>
@@ -119,7 +158,7 @@ const ResultPage = () => {
             )}
           </Box>
           <Box>
-            <Text mb={2} fontSize="sm" color="gray.500">
+            <Text mb={2} fontSize="sm" color="gray.600">
               We found multiple pictures using the search query{" "}
               <Text as="span" color="brand.700">
                 "{result.result.searchQuery}"
@@ -136,28 +175,6 @@ const ResultPage = () => {
             </HStack>
           </Box>
         </VStack>
-      )}
-      {result?.status === "pending" && (
-        <Text textAlign="center">
-          <strong>
-            You are in the queue ✨ <br />
-          </strong>
-          The page will refresh when your result is ready.
-        </Text>
-      )}
-      {result?.status === "inProgress" && (
-        <Text textAlign="center">
-          <strong>We are generating your result 🏃‍♂️</strong>
-          <br />
-          We'll recheck if it's done every few seconds.
-        </Text>
-      )}
-      {result && result.status === "failed" && (
-        <Text>
-          <strong>We couldn't generate your result ❌</strong>
-          <br />
-          Please try again inputing a different idea.
-        </Text>
       )}
     </VStack>
   );

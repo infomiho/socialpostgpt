@@ -4,7 +4,7 @@ app socialpostgpt {
   },
   title: "SocialPostGPT",
   client: {
-    rootComponent: import { App } from "@client/App.jsx",
+    rootComponent: import { App } from "@client/App.tsx",
   },
   db: {
     system: PostgreSQL,
@@ -43,6 +43,11 @@ query getResult {
   entities: [Generation]
 }
 
+query getLatestResults {
+  fn: import { getLatestResults } from "@server/generation.js",
+  entities: [Generation]
+}
+
 job generateResult {
   executor: PgBoss,
   perform: {
@@ -57,6 +62,7 @@ job generateResult {
 entity Generation {=psl
   id String @id @unique @default(uuid())
   prompt String
+  options String @default("")
   status String @default("pending")
   retryTimes Int @default(0)
   createdAt DateTime @default(now())

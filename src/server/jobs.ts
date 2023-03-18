@@ -2,6 +2,7 @@
 import { pexels } from "./external/pexels.js";
 import { chatgpt } from "./external/chatgpt.js";
 import { jobStatus } from "./types.js";
+import { Generation } from "@wasp/entities";
 
 export async function generateResultJob(
   args: { generationId: string },
@@ -18,19 +19,21 @@ export async function generateResultJob(
       throw new Error(`Generation ${generationId} not found`);
     }
 
+    const options = getGenerationOptions(generation);
+
     console.log("Prompt found", generation.prompt);
 
-    context.entities.Generation.update(
-      {
-        where: { id: generationId },
-      },
-      {
+    await context.entities.Generation.update({
+      where: { id: generationId },
+      data: {
         status: jobStatus.inProgress,
         retryTimes: { increment: 1 },
-      }
-    );
+      },
+    });
 
-    const result = await getResultFromGPT(generation.prompt);
+    await sleep(3000);
+
+    const result = await getResultFromGPT(generation.prompt, options);
 
     console.log("Result from GPT", result);
 
@@ -69,14 +72,12 @@ export async function generateResultJob(
   } catch (error) {
     console.error("Error while creating the result", error);
 
-    await context.entities.Generation.update(
-      {
-        where: { id: generationId },
-      },
-      {
+    await context.entities.Generation.update({
+      where: { id: generationId },
+      data: {
         status: jobStatus.failed,
-      }
-    );
+      },
+    });
 
     throw error;
   }
@@ -90,8 +91,11 @@ type ChatGPTResponse = {
   hashtags: string[];
 };
 
-async function getResultFromGPT(userPrompt: string): Promise<ChatGPTResponse> {
-  const prompt = getPromptV2(userPrompt);
+async function getResultFromGPT(
+  userPrompt: string,
+  options: GenerationOptions
+): Promise<ChatGPTResponse> {
+  const prompt = getPromptV3(userPrompt, options);
 
   const result = await chatgpt.getResponse(prompt);
 
@@ -125,3 +129,42 @@ Generate a search query that can be typed into stock photo websites that will fi
 Write a professional and modern social media post content that can be used along with the photos. Include hashtags and emojis if appropriate. Put it in the "content" field.
 
 Write appropriate hashtags and put them in the "hashtags" field.`;
+
+const getPromptV3 = (prompt: string, options: GenerationOptions) => {
+  const emojisPart = options.includeEmojis
+    ? "Include appropriate emojis."
+    : `Don't include emojis.`;
+  const hashtagsPart = options.includeHashtags
+    ? `Write appropriate hashtags and put them in the "hashtags" field.`
+    : "Don't include hashtags.";
+  const ctaPart = options.includeCTA
+    ? `Include a call to action in the post.`
+    : "Don't include a call to action in the content.";
+  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "query": "some search query", "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text.
+
+  Generate a search query that can be typed into stock photo websites that will find photos that fit the following content "${prompt}". Use generic keywords which are more likely to get results on the stock photos website. Put in the "query" field.
+  
+  Write a social media post content that can be used along with the photos. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.`;
+};
+
+type GenerationOptions = {
+  includeEmojis: boolean;
+  includeHashtags: boolean;
+  includeCTA: boolean;
+};
+
+function getGenerationOptions(generation: Generation): GenerationOptions {
+  try {
+    return JSON.parse(generation.options);
+  } catch (error) {
+    return {
+      includeEmojis: true,
+      includeHashtags: true,
+      includeCTA: false,
+    };
+  }
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
