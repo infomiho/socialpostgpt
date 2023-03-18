@@ -1,0 +1,88 @@
+app socialpostgpt {
+  wasp: {
+    version: "^0.9.0"
+  },
+  title: "SocialPostGPT",
+  client: {
+    rootComponent: import { App } from "@client/App.jsx",
+  },
+  db: {
+    system: PostgreSQL,
+  },
+  dependencies: [
+    ("unsplash-js", "7.0.15"),
+    ("chatgpt", "5.1.1"),
+    ("@chakra-ui/react", "1.8.8"),
+    ("react-icons", "4.8.0"),
+    ("@emotion/react", "11.10.6"),
+    ("@emotion/styled", "11.10.6"),
+    ("framer-motion", "6.5.1"),
+    ("react-hook-form", "7.43.1"),
+    ("@fontsource/inter", "4.5.15")
+  ],
+}
+
+route RootRoute { path: "/", to: MainPage }
+page MainPage {
+  component: import Main from "@client/pages/MainPage.tsx"
+}
+
+route ResultPage { path: "/:generationId", to: ResultPage }
+page ResultPage {
+  component: import Main from "@client/pages/ResultPage.tsx"
+}
+
+action submitPrompt {
+  fn: import { submitPrompt } from "@server/generation.js",
+  entities: [Generation]
+}
+
+query getResult {
+  fn: import { getResult } from "@server/generation.js",
+  entities: [Generation]
+}
+
+job generateResult {
+  executor: PgBoss,
+  perform: {
+    fn:  import { generateResultJob } from "@server/jobs.js",
+    executorOptions: {
+      pgBoss: {=json { "retryLimit": 1 } json=}
+    }
+  },
+  entities: [Generation],
+}
+
+entity Generation {=psl
+  id String @id @unique @default(uuid())
+  prompt String
+  resultId String?
+  result Result?
+psl=}
+
+entity Result {=psl
+  id String @id @unique @default(uuid())
+  description String
+  unsplashSearchQuery String
+  images Image[]
+  generationId String @unique
+  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+psl=}
+
+entity Image {=psl
+  id String @id @unique @default(uuid())
+  url String
+  downloadUrl String @default("")
+  unsplashId String
+  authorId String
+  author UnsplashAuthor @relation(fields: [authorId], references: [id])
+  resultId String
+  result Result @relation(fields: [resultId], references: [id])
+psl=}
+
+entity UnsplashAuthor {=psl
+  id String @id @unique @default(uuid())
+  name String
+  url String
+  images Image[]
+psl=}
