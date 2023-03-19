@@ -3,6 +3,7 @@ export type ImageSearchAPI = {
 };
 
 export type ImageSearchResult = {
+  provider: "unsplash" | "pexels";
   url: string;
   downloadUrl: string;
   id: string;

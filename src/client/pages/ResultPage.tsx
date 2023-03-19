@@ -8,7 +8,9 @@ import {
   Text,
   VStack,
   AspectRatio,
+  Icon,
 } from "@chakra-ui/react";
+import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
 import {
   Image as ImageEntity,
   Result,
@@ -134,9 +136,29 @@ const ResultPage = () => {
                       src={currentImage.url}
                       alt={result.result.searchQuery}
                       objectFit="cover"
+                      objectPosition="center"
                       borderRadius="md"
                     />
                   </AspectRatio>
+                  <HStack
+                    spacing={2}
+                    style={{
+                      position: "absolute",
+                      top: "0.5rem",
+                      right: "0.5rem",
+                    }}
+                  >
+                    <Button
+                      size="sm"
+                      colorScheme="brand"
+                      onClick={previousImage}
+                    >
+                      <Icon as={HiArrowLeft} />
+                    </Button>
+                    <Button size="sm" colorScheme="brand" onClick={nextImage}>
+                      <Icon as={HiArrowRight} />
+                    </Button>
+                  </HStack>
                   {currentImage.downloadUrl && (
                     <Button
                       size="sm"
@@ -157,7 +179,10 @@ const ResultPage = () => {
                   <Link href={currentImage.author.url}>
                     {currentImage.author.name}
                   </Link>{" "}
-                  on <ImageProviderLink />
+                  on{" "}
+                  <ImageProviderLink
+                    isUnsplashUsed={currentImage.provider === "unsplash"}
+                  />
                 </Text>
               </Box>
             )}
@@ -166,23 +191,15 @@ const ResultPage = () => {
             <Text mb={2} fontSize="sm" color="gray.600">
               We found multiple photos by searching for{" "}
               {result.result.searchQuery.map((query, index) => (
-                <>
+                <span key={query}>
                   <Text as="span" color="brand.700">
                     "{query}"
                   </Text>
                   {index !== result.result!.searchQuery.length - 1 && " and "}
-                </>
+                </span>
               ))}
               , pick the best one.
             </Text>
-            <HStack spacing={2}>
-              <Button variant="outline" onClick={previousImage}>
-                Previous photo
-              </Button>
-              <Button variant="outline" onClick={nextImage}>
-                Next photo
-              </Button>
-            </HStack>
           </Box>
         </VStack>
       )}

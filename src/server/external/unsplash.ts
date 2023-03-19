@@ -13,6 +13,7 @@ export const unsplash: ImageSearchAPI = {
       perPage: 5,
     });
     return response.response?.results.map((image) => ({
+      provider: "unsplash",
       url: image.urls.regular,
       downloadUrl: image.links.download,
       id: image.id,

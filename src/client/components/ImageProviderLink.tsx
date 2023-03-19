@@ -1,8 +1,12 @@
 import { Link } from "@chakra-ui/react";
 
-const isUnsplashUsed = false;
-
-export function ImageProviderLink({ link }: { link?: string }) {
+export function ImageProviderLink({
+  isUnsplashUsed = false,
+  link,
+}: {
+  isUnsplashUsed?: boolean;
+  link?: string;
+}) {
   const title = isUnsplashUsed ? "Unsplash" : "Pexels";
   const defaultHref = isUnsplashUsed
     ? "https://unsplash.com/"

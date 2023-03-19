@@ -1,4 +1,4 @@
-// import { unsplash } from "./external/unsplash.js";
+import { unsplash } from "./external/unsplash.js";
 import { pexels } from "./external/pexels.js";
 import { chatgpt } from "./external/chatgpt.js";
 import { ImageSearchResult, jobStatus } from "./types.js";
@@ -52,7 +52,7 @@ export async function generateResultJob(
                 url: image.url,
                 downloadUrl: image.downloadUrl,
                 providerId: image.id,
-                provider: "pexels",
+                provider: image.provider,
                 author: {
                   create: {
                     name: image.author.name,
@@ -165,15 +165,37 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Combines results from two queries into one array of 5 images.
+// Combines multiple queries and providers into a list of images
 async function getStockPhotos(queries: string[]): Promise<ImageSearchResult[]> {
-  const results = await Promise.all(
-    queries.map((query) => pexels.search(query))
-  );
-  if (!results[0] || !results[1]) {
+  const promises = queries
+    .map((query) => [pexels.search(query), unsplash.search(query)])
+    .flat();
+  const results = await Promise.all(promises);
+  const availableResults = results.filter((result) => result);
+  if (availableResults.length === 0) {
     throw new Error("No search results found");
   }
-  const first = results[0].slice(0, 3);
-  const second = results[1].slice(0, 2);
-  return [...first, ...second];
+
+  return sortImages(
+    uniqueImages(availableResults.map((result) => result!.slice(0, 2)).flat())
+  );
+}
+
+// Generate unique array of ImageSearchResult by url field
+function uniqueImages(images: ImageSearchResult[]): ImageSearchResult[] {
+  const unique = images.filter(
+    (image, index, self) => index === self.findIndex((t) => t.url === image.url)
+  );
+  return unique;
+}
+
+function sortImages(images: ImageSearchResult[]): ImageSearchResult[] {
+  const sortedImages = [...images];
+  sortedImages.sort((a, b) => {
+    if (a.provider === b.provider) {
+      return a.id > b.id ? 1 : -1;
+    }
+    return a.provider === "pexels" ? 1 : -1;
+  });
+  return sortedImages;
 }

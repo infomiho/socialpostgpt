@@ -10,6 +10,7 @@ export const pexels: ImageSearchAPI = {
       return undefined;
     }
     return response.photos.map((image) => ({
+      provider: "pexels",
       url: image.src.landscape,
       downloadUrl: image.src.original,
       id: image.id.toString(),

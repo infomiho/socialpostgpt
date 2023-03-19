@@ -56,7 +56,7 @@ export function App({ children }: { children: JSX.Element }) {
               <Link href="https://openai.com/" target="_blank">
                 OpenAI
               </Link>{" "}
-              and <ImageProviderLink />.
+              and <ImageProviderLink /> + <ImageProviderLink isUnsplashUsed />.
             </p>
           </HStack>
         </VStack>
