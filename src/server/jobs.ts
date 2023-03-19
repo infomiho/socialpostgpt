@@ -128,19 +128,18 @@ Write appropriate hashtags and put them in the "hashtags" field.`;
 
 const getPromptV3 = (prompt: string, options: GenerationOptions) => {
   const emojisPart = options.includeEmojis
-    ? "Include appropriate emojis, don't over do it."
+    ? "Add some emojis where appropriate."
     : `Don't include emojis.`;
   const hashtagsPart = options.includeHashtags
-    ? `Write appropriate hashtags and put them in the "hashtags" field.`
+    ? `Add appropriate hashtags at the end.`
     : "Don't include hashtags.";
   const ctaPart = options.includeCTA
     ? `Include a call to action in the post.`
     : "Don't include a call to action in the content.";
-  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "queries": ["some search query", "other search query"], "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text. Escape quotes with backslash.
-
-  Generate a 2 search queries to search on stock photo website that will find photos that fit the following content "${prompt}". Avoid repeating the content, be creative to get good photos. Two queries should be different. Put in the "queries" field.
-  
-  Write a social media post content that can be used along with the photos. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.`;
+  return `You are a creative agency writer and are composing a social media post about "${prompt}". Write an engaging and professional post and find photos that fit the content.
+Generate a 2 search queries to search for photos that fit the content. Be creative to get good stock photos. Two queries should be different. Put in the "queries" field.
+Write the post content. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.
+You must respond ONLY with JSON that looks like this: { "queries": ["some search query", "other search query"], "content": "some catchy post content"} and no extra text. Escape quotes with backslash.`;
 };
 
 type GenerationOptions = {
