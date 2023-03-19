@@ -31,7 +31,10 @@ const ResultPage = () => {
     { generationId: string | null },
     Generation & {
       result:
-        | (Result & { images?: (ImageEntity & { author: ImageAuthor })[] })
+        | (Result & {
+            searchQuery: string[];
+            images?: (ImageEntity & { author: ImageAuthor })[];
+          })
         | null;
     }
   >(
@@ -82,7 +85,9 @@ const ResultPage = () => {
           borderRadius="lg"
           textAlign="center"
         >
-          {(isLoading || result?.status !== "done") && <Spinner />}
+          {(isLoading || !["done", "failed"].includes(result?.status!)) && (
+            <Spinner />
+          )}
           {result?.status === "pending" && (
             <Text textAlign="center">
               <strong>
@@ -159,18 +164,23 @@ const ResultPage = () => {
           </Box>
           <Box>
             <Text mb={2} fontSize="sm" color="gray.600">
-              We found multiple pictures using the search query{" "}
-              <Text as="span" color="brand.700">
-                "{result.result.searchQuery}"
-              </Text>
+              We found multiple photos by searching for{" "}
+              {result.result.searchQuery.map((query, index) => (
+                <>
+                  <Text as="span" color="brand.700">
+                    "{query}"
+                  </Text>
+                  {index !== result.result!.searchQuery.length - 1 && " and "}
+                </>
+              ))}
               , pick the best one.
             </Text>
             <HStack spacing={2}>
               <Button variant="outline" onClick={previousImage}>
-                Previous image
+                Previous photo
               </Button>
               <Button variant="outline" onClick={nextImage}>
-                Next image
+                Next photo
               </Button>
             </HStack>
           </Box>

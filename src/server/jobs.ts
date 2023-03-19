@@ -1,7 +1,7 @@
 // import { unsplash } from "./external/unsplash.js";
 import { pexels } from "./external/pexels.js";
 import { chatgpt } from "./external/chatgpt.js";
-import { jobStatus } from "./types.js";
+import { ImageSearchResult, jobStatus } from "./types.js";
 import { Generation } from "@wasp/entities";
 
 export async function generateResultJob(
@@ -9,19 +9,19 @@ export async function generateResultJob(
   context: any
 ) {
   const { generationId } = args;
-  console.log("Processing generation", generationId);
+  console.log("[job] Processing generation", generationId);
   try {
     const generation = await context.entities.Generation.findUnique({
       where: { id: generationId },
     });
 
     if (!generation) {
-      throw new Error(`Generation ${generationId} not found`);
+      throw new Error(`[job] Generation ${generationId} not found`);
     }
 
     const options = getGenerationOptions(generation);
 
-    console.log("Prompt found", generation.prompt);
+    console.log("[job] Prompt found", generation.prompt);
 
     await context.entities.Generation.update({
       where: { id: generationId },
@@ -35,13 +35,9 @@ export async function generateResultJob(
 
     const result = await getResultFromGPT(generation.prompt, options);
 
-    console.log("Result from GPT", result);
+    console.log("[job] Result from GPT", result);
 
-    const searchResults = await pexels.search(result.query);
-
-    if (!searchResults) {
-      throw new Error("No search results found");
-    }
+    const images = await getStockPhotos(result.queries);
 
     await context.entities.Generation.update({
       where: { id: generationId },
@@ -50,9 +46,9 @@ export async function generateResultJob(
         result: {
           create: {
             description: result.content,
-            searchQuery: result.query,
+            searchQuery: JSON.stringify(result.queries),
             images: {
-              create: searchResults.map((image) => ({
+              create: images.map((image) => ({
                 url: image.url,
                 downloadUrl: image.downloadUrl,
                 providerId: image.id,
@@ -70,7 +66,7 @@ export async function generateResultJob(
       },
     });
   } catch (error) {
-    console.error("Error while creating the result", error);
+    console.error("[job] Error while creating the result", error);
 
     await context.entities.Generation.update({
       where: { id: generationId },
@@ -86,7 +82,7 @@ export async function generateResultJob(
 }
 
 type ChatGPTResponse = {
-  query: string;
+  queries: string[];
   content: string;
   hashtags: string[];
 };
@@ -132,7 +128,7 @@ Write appropriate hashtags and put them in the "hashtags" field.`;
 
 const getPromptV3 = (prompt: string, options: GenerationOptions) => {
   const emojisPart = options.includeEmojis
-    ? "Include appropriate emojis."
+    ? "Include appropriate emojis, don't over do it."
     : `Don't include emojis.`;
   const hashtagsPart = options.includeHashtags
     ? `Write appropriate hashtags and put them in the "hashtags" field.`
@@ -140,9 +136,9 @@ const getPromptV3 = (prompt: string, options: GenerationOptions) => {
   const ctaPart = options.includeCTA
     ? `Include a call to action in the post.`
     : "Don't include a call to action in the content.";
-  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "query": "some search query", "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text.
+  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "queries": ["some search query", "other search query"], "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text.
 
-  Generate a search query that can be typed into stock photo websites that will find photos that fit the following content "${prompt}". Use generic keywords which are more likely to get results on the stock photos website. Put in the "query" field.
+  Generate a 2 search queries to search on stock photo website that will find photos that fit the following content "${prompt}". Avoid repeating the content, be creative to get good photos. Two queries should be different. Put in the "queries" field.
   
   Write a social media post content that can be used along with the photos. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.`;
 };
@@ -167,4 +163,17 @@ function getGenerationOptions(generation: Generation): GenerationOptions {
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Combines results from two queries into one array of 5 images.
+async function getStockPhotos(queries: string[]): Promise<ImageSearchResult[]> {
+  const results = await Promise.all(
+    queries.map((query) => pexels.search(query))
+  );
+  if (!results[0] || !results[1]) {
+    throw new Error("No search results found");
+  }
+  const first = results[0].slice(0, 3);
+  const second = results[1].slice(0, 2);
+  return [...first, ...second];
 }

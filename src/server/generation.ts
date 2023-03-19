@@ -44,7 +44,16 @@ export const getResult: GetResult<
   if (!generation) {
     return null;
   }
-  return generation;
+  const result = generation.result
+    ? {
+        ...generation.result,
+        searchQuery: getResultSearchQuery(generation.result),
+      }
+    : null;
+  return {
+    ...generation,
+    result,
+  };
 };
 
 export const getLatestResults: GetLatestResults<{}, Result[]> = async (
@@ -67,5 +76,13 @@ export const getLatestResults: GetLatestResults<{}, Result[]> = async (
       },
     },
   });
-  return generations.map((g) => g.result);
+  return generations.map((g) => g.result!);
 };
+
+function getResultSearchQuery(result: Result) {
+  try {
+    return JSON.parse(result.searchQuery);
+  } catch (e) {
+    return [result.searchQuery];
+  }
+}

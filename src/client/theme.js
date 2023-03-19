@@ -178,6 +178,7 @@ export const theme = extendTheme({
           borderRadius: 3,
           padding: 3,
           bg: "white",
+          width: "full",
         },
         control: {
           _focus: {

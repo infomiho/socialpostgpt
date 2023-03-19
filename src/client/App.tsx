@@ -39,9 +39,10 @@ export function App({ children }: { children: JSX.Element }) {
               textAlign="center"
               lineHeight={1.5}
             >
-              SocialPostGPT generates a post and 5 stock images to go with it 🤙
+              ... writes catchy posts for social media and picks images to go
+              with it 🤙
               <br />
-              Just provide it with your idea and it'll do the rest!
+              Just provide it with a brief and see the magic happen!
             </Heading>
           </Box>
           {children}

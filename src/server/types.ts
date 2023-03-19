@@ -2,7 +2,7 @@ export type ImageSearchAPI = {
   search: (query: string) => Promise<ImageSearchResult[] | undefined>;
 };
 
-type ImageSearchResult = {
+export type ImageSearchResult = {
   url: string;
   downloadUrl: string;
   id: string;
