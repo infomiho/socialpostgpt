@@ -93,7 +93,7 @@ async function getResultFromGPT(
 ): Promise<ChatGPTResponse> {
   const prompt = getPromptV3(userPrompt, options);
 
-  const result = await chatgpt.getResponse(prompt);
+  const result = await chatgpt.getResponse(prompt, 0.8);
 
   try {
     const parsedResult = JSON.parse(result.text) as ChatGPTResponse;
@@ -136,7 +136,7 @@ const getPromptV3 = (prompt: string, options: GenerationOptions) => {
   const ctaPart = options.includeCTA
     ? `Include a call to action in the post.`
     : "Don't include a call to action in the content.";
-  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "queries": ["some search query", "other search query"], "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text.
+  return `You must respond ONLY with JSON that looks like this: \`\`\`{ "queries": ["some search query", "other search query"], "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text. Escape quotes with backslash.
 
   Generate a 2 search queries to search on stock photo website that will find photos that fit the following content "${prompt}". Avoid repeating the content, be creative to get good photos. Two queries should be different. Put in the "queries" field.
   
