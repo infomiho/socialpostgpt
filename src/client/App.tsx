@@ -6,16 +6,21 @@ import {
   HStack,
   Box,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/900.css";
+
+import { useQuery } from "@wasp/queries";
+import getNumberOfResults from "@wasp/queries/getNumberOfResults";
 
 import { ImageProviderLink } from "./components/ImageProviderLink";
 
 import { theme } from "./theme";
 
 export function App({ children }: { children: JSX.Element }) {
+  const { data: numberOfResults } = useQuery(getNumberOfResults);
   return (
     <ChakraProvider theme={theme}>
       <Container py={8} px={4} maxW="container.md">
@@ -46,7 +51,7 @@ export function App({ children }: { children: JSX.Element }) {
             </Heading>
           </Box>
           {children}
-          <HStack justifyContent="center">
+          <VStack alignItems="center">
             <p>
               Powered by{" "}
               <Link href="https://wasp-lang.dev" target="_blank">
@@ -58,7 +63,22 @@ export function App({ children }: { children: JSX.Element }) {
               </Link>{" "}
               and <ImageProviderLink /> + <ImageProviderLink isUnsplashUsed />.
             </p>
-          </HStack>
+            {numberOfResults && (
+              <Text
+                bg="white"
+                fontSize="sm"
+                color="brand.900"
+                border="1px"
+                borderColor="brand.300"
+                boxShadow="base"
+                p={1}
+                px={2}
+                borderRadius="full"
+              >
+                Total posts generated: {numberOfResults}
+              </Text>
+            )}
+          </VStack>
         </VStack>
       </Container>
     </ChakraProvider>

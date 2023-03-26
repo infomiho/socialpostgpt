@@ -48,6 +48,11 @@ query getLatestResults {
   entities: [Generation]
 }
 
+query getNumberOfResults {
+  fn: import { getNumberOfResults } from "@server/stats.js",
+  entities: [Result]
+}
+
 job generateResult {
   executor: PgBoss,
   perform: {
