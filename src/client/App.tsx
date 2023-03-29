@@ -3,14 +3,16 @@ import {
   Container,
   Heading,
   Link,
-  HStack,
   Box,
   VStack,
   Text,
+  Icon,
+  Flex,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/900.css";
+import { AiFillGithub } from "react-icons/ai";
 
 import { useQuery } from "@wasp/queries";
 import getNumberOfResults from "@wasp/queries/getNumberOfResults";
@@ -25,13 +27,26 @@ export function App({ children }: { children: JSX.Element }) {
     <ChakraProvider theme={theme}>
       <Container py={8} px={4} maxW="container.md">
         <VStack gap={4}>
-          <Box mt={8}>
-            <Heading
-              fontWeight="black"
-              color="brand.700"
-              textAlign="center"
+          <Box mt={6} textAlign="center">
+            <Text
+              fontSize="xs"
               mb={2}
+              display="inline-flex"
+              alignItems="center"
+              gap={1}
             >
+              Check out the source code on
+              <Link
+                href="https://github.com/infomiho/socialpostgpt"
+                target="_blank"
+                display="inline-flex"
+                alignItems="center"
+                gap={1}
+              >
+                <Icon as={AiFillGithub} /> GitHub
+              </Link>
+            </Text>
+            <Heading fontWeight="black" color="brand.700" mb={2}>
               <Link as={RouterLink} to="/">
                 SocialPostGPT
               </Link>
