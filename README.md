@@ -1,8 +1,4 @@
-# SocialPostGPT.xyz
-
-Hello there 👋
-
-Welcome to the source code of [SocialPostGPT.xyz](https://socialpostgpt.xyz).
+Hello there 👋 Welcome to the source code of [SocialPostGPT.xyz](https://socialpostgpt.xyz).
 
 We are using:
 - [Wasp](https://wasp-lang.dev) as our full-stack framework
@@ -28,7 +24,7 @@ Copy `env.example` to `.env.server` and fill in the values.
 You'll need a PostgreSQL running locally. You can use Docker to run one:
 
 ```bash
-docker run --name daily-ai-comics-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+docker run --name socialpostgpt-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 ```
 
 Make sure you have Wasp installed ([installing Wasp](https://wasp-lang.dev/docs#2-installation)), then run:
