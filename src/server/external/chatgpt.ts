@@ -7,7 +7,7 @@ const api = new ChatGPTAPI({
 export const chatgpt = {
   async getResponse(prompt: string, temperature?: number) {
     const res = await api.sendMessage(prompt, {
-      completionParams: { temperature },
+      completionParams: { temperature, model: "gpt-4" },
     });
     return res;
   },

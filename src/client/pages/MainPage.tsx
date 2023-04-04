@@ -13,6 +13,7 @@ import {
   Image,
   Heading,
   Hide,
+  Select,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import submitPrompt from "@wasp/actions/submitPrompt";
@@ -22,14 +23,17 @@ import { useHistory } from "react-router-dom";
 import { useQuery } from "@wasp/queries";
 import getLatestResults from "@wasp/queries/getLatestResults";
 import { Result, Image as ImageEntity } from "@wasp/entities";
+import { socialMediaWebsites } from "@wasp/shared/socialMediaWebsites";
 
 const MainPage = () => {
   const { data: latestResults } = useQuery(getLatestResults);
+  const socialMediaWebsiteOptions = Object.values(socialMediaWebsites);
   const { register, handleSubmit } = useForm<{
     description: string;
     includeEmojis: boolean;
     includeHashtags: boolean;
     includeCTA: boolean;
+    adjustForSocialMediaWebsite: string;
   }>();
   const [isLoading, setIsLoading] = useState(false);
   const [generationId, setGenerationId] = useState<string | null>(null);
@@ -67,6 +71,26 @@ const MainPage = () => {
               boxShadow="lg"
               backgroundColor="white"
             />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Adjust for</FormLabel>
+            <Select
+              {...register("adjustForSocialMediaWebsite", {
+                value: socialMediaWebsites.any.value,
+                required: true,
+              })}
+              placeholder="Select a website"
+              size="lg"
+              disabled={isLoading}
+              boxShadow="lg"
+              backgroundColor="white"
+            >
+              {socialMediaWebsiteOptions.map((website) => (
+                <option key={website.value} value={website.value}>
+                  {website.label}
+                </option>
+              ))}
+            </Select>
           </FormControl>
           <Flex
             alignItems="center"

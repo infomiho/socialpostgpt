@@ -171,6 +171,23 @@ export const theme = extendTheme({
         },
       },
     },
+    Select: {
+      baseStyle: {
+        container: {
+          boxShadow: "lg",
+          borderRadius: 3,
+          padding: 3,
+          bg: "white",
+          width: "full",
+        },
+        field: {
+          bg: "white",
+          _focus: {
+            borderColor: "brand.800",
+          },
+        },
+      },
+    },
     Checkbox: {
       baseStyle: {
         container: {

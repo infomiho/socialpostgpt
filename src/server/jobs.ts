@@ -93,6 +93,8 @@ async function getResultFromGPT(
 ): Promise<ChatGPTResponse> {
   const prompt = getPromptV3(userPrompt, options);
 
+  console.log("[job] Prompt for GPT", prompt);
+
   const result = await chatgpt.getResponse(prompt, 0.8);
 
   try {
@@ -127,6 +129,7 @@ Write a professional and modern social media post content that can be used along
 Write appropriate hashtags and put them in the "hashtags" field.`;
 
 const getPromptV3 = (prompt: string, options: GenerationOptions) => {
+  console.log(prompt, options);
   const emojisPart = options.includeEmojis
     ? "Add some emojis where appropriate."
     : `Don't include emojis.`;
@@ -136,7 +139,12 @@ const getPromptV3 = (prompt: string, options: GenerationOptions) => {
   const ctaPart = options.includeCTA
     ? `Include a call to action in the post.`
     : "Don't include a call to action in the content.";
-  return `You are a creative agency writer and are composing a social media post about "${prompt}". Write an engaging and professional post and find photos that fit the content.
+  const websiteAdjustment =
+    options.adjustForSocialMediaWebsite &&
+    options.adjustForSocialMediaWebsite !== "any"
+      ? ` optimized for ${options.adjustForSocialMediaWebsite}`
+      : "";
+  return `You are a creative agency writer and are composing a social media post${websiteAdjustment} about "${prompt}". Write an engaging and professional post and find photos that fit the content.
 Generate a 2 search queries to search for photos that fit the content. Be creative to get good stock photos. Two queries should be different. Put in the "queries" field.
 Write the post content. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.
 You must respond ONLY with JSON that looks like this: { "queries": ["some search query", "other search query"], "content": "some catchy post content"} and no extra text. Escape quotes with backslash.`;
@@ -146,6 +154,7 @@ type GenerationOptions = {
   includeEmojis: boolean;
   includeHashtags: boolean;
   includeCTA: boolean;
+  adjustForSocialMediaWebsite?: string;
 };
 
 function getGenerationOptions(generation: Generation): GenerationOptions {
@@ -156,6 +165,7 @@ function getGenerationOptions(generation: Generation): GenerationOptions {
       includeEmojis: true,
       includeHashtags: true,
       includeCTA: false,
+      adjustForSocialMediaWebsite: "",
     };
   }
 }
