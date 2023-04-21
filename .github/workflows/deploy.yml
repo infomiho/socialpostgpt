@@ -6,6 +6,6 @@ jobs:
     name: Deploy with Wasp
     runs-on: ubuntu-latest
     steps:
-      - uses: wasp-lang/deploy-action
+      - uses: wasp-lang/deploy-action@main
         with:
           fly-token: ${{ secrets.FLY_TOKEN }}
