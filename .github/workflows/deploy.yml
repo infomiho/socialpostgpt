@@ -13,7 +13,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Wasp
         run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: wasp deploy fly deploy
+      - name: Install Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy
+        run: wasp deploy fly deploy
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_TOKEN }}
