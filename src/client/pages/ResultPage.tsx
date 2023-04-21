@@ -29,17 +29,7 @@ const ResultPage = () => {
   const [currentImage, setCurrentImage] = useState<
     (ImageEntity & { author: ImageAuthor }) | null
   >(null);
-  const { data: result, isLoading } = useQuery<
-    { generationId: string | null },
-    Generation & {
-      result:
-        | (Result & {
-            searchQuery: string[];
-            images?: (ImageEntity & { author: ImageAuthor })[];
-          })
-        | null;
-    }
-  >(
+  const { data: result, isLoading } = useQuery(
     getResult,
     { generationId },
     { enabled: !!generationId && !isFetched, refetchInterval: 3000 }

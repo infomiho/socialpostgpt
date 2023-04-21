@@ -1,6 +1,6 @@
 import { SubmitPrompt } from "@wasp/actions/types";
 import { GetResult, GetLatestResults } from "@wasp/queries/types";
-import { Generation, Result } from "@wasp/entities";
+import { Generation, Result, Image, ImageAuthor } from "@wasp/entities";
 
 import { generateResult } from "@wasp/jobs/generateResult.js";
 import { socialMediaWebsitesKeys } from "@wasp/shared/socialMediaWebsites.js";
@@ -52,7 +52,15 @@ export const submitPrompt: SubmitPrompt<
 };
 export const getResult: GetResult<
   { generationId: string },
-  Generation | null
+  | (Generation & {
+      result:
+        | (Result & {
+            searchQuery: string[];
+            images?: (Image & { author: ImageAuthor })[];
+          })
+        | null;
+    })
+  | null
 > = async (args, context) => {
   const generation = await context.entities.Generation.findUnique({
     where: { id: args.generationId },
