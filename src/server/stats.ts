@@ -1,6 +1,6 @@
 import { GetNumberOfResults } from "@wasp/queries/types";
 
-export const getNumberOfResults: GetNumberOfResults = async (
+export const getNumberOfResults: GetNumberOfResults<void, number> = async (
   _args,
   context
 ) => {
