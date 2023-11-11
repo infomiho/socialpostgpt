@@ -11,8 +11,7 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-# Caprover build from the ./caprover context, that's why we need to copy from ../
-COPY .. /app
+COPY . /app
 
 RUN wasp build
 
