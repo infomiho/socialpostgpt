@@ -1,0 +1,45 @@
+# Building the Wasp app
+FROM --platform=linux/amd64 node:18 AS wasp-build
+
+RUN curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.11.7
+
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+
+COPY . /app
+
+RUN wasp build
+
+# Building the server
+
+FROM node:18-alpine3.17 AS node
+
+FROM node AS base
+RUN apk --no-cache -U upgrade # To ensure any potential security patches are applied.
+
+FROM base AS server-builder
+RUN apk add --no-cache build-base libtool autoconf automake
+WORKDIR /app
+COPY --from=wasp-build /app/.wasp/build/server/ ./server/
+# Install npm packages, resulting in node_modules/.
+RUN cd server && npm install
+COPY --from=wasp-build /app/.wasp/build/db/schema.prisma ./db/
+RUN cd server && PRISMA_CLIENT_OUTPUT_DIR=../server/node_modules/.prisma/client/ npx prisma generate --schema='../db/schema.prisma'
+# Building the server should come after Prisma generation.
+RUN cd server && npm run build
+
+# Serving the server
+
+FROM base AS server-production
+RUN apk add --no-cache python3
+ENV NODE_ENV production
+WORKDIR /app
+COPY --from=server-builder /app/server/node_modules ./server/node_modules
+COPY --from=server-builder /app/server/dist ./server/dist
+COPY --from=server-builder /app/server/package*.json ./server/
+COPY --from=server-builder /app/server/scripts ./server/scripts
+COPY --from=wasp-build /app/.wasp/build/db/ ./db/
+EXPOSE ${PORT}
+WORKDIR /app/server
+ENTRYPOINT ["npm", "run", "start-production"]

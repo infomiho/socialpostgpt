@@ -17,7 +17,7 @@ app socialpostgpt {
     ("@emotion/react", "11.10.6"),
     ("@emotion/styled", "11.10.6"),
     ("framer-motion", "6.5.1"),
-    ("react-hook-form", "7.43.1"),
+    ("react-hook-form", "^7.45.4"),
     ("@fontsource/inter", "4.5.15"),
     ("pexels", "1.4.0")
   ],
