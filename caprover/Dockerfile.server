@@ -9,6 +9,8 @@ WORKDIR /app
 
 COPY . /app
 
+RUN ls -lah
+
 RUN wasp build
 
 # Building the server
