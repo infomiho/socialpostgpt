@@ -7,9 +7,8 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-COPY . /app
-
-RUN ls -lah
+# Caprover build from the ./caprover context, that's why we need to copy from ../
+COPY .. /app
 
 RUN wasp build
 
