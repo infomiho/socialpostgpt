@@ -1,0 +1,28 @@
+# Building the Wasp app
+FROM --platform=linux/amd64 node:18 AS wasp-build
+
+ARG SERVER_APP
+
+ENV SERVER_APP=$SERVER_APP
+
+RUN curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.11.7
+
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+
+COPY . /app
+
+RUN wasp build
+
+# Building the client
+
+WORKDIR /app/.wasp/build/web-app
+
+RUN REACT_APP_API_URL=https://$SERVER_APP.apps.twoducks.dev npm run build
+
+# Serving the client
+
+FROM pierrezemb/gostatic
+CMD [ "-fallback", "index.html", "-enable-logging"]
+COPY --from=wasp-build /app/.wasp/build/web-app/build /srv/http
