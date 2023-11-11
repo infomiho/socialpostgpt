@@ -1,9 +1,9 @@
 # Building the Wasp app
 FROM --platform=linux/amd64 node:18 AS wasp-build
 
-ARG SERVER_APP
+ARG SERVER_APP_URL
 
-ENV SERVER_APP=$SERVER_APP
+ENV SERVER_APP_URL=$SERVER_APP_URL
 
 RUN curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.11.7
 
@@ -19,7 +19,7 @@ RUN wasp build
 
 WORKDIR /app/.wasp/build/web-app
 
-RUN REACT_APP_API_URL=https://$SERVER_APP.apps.twoducks.dev npm run build
+RUN REACT_APP_API_URL=$SERVER_APP_URL npm run build
 
 # Serving the client
 
