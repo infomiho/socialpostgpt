@@ -19,7 +19,8 @@ app socialpostgpt {
     ("framer-motion", "6.5.1"),
     ("react-hook-form", "^7.45.4"),
     ("@fontsource/inter", "4.5.15"),
-    ("pexels", "1.4.0")
+    ("pexels", "1.4.0"),
+    ("sonner", "^1.2.0")
   ],
 }
 

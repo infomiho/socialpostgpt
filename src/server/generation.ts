@@ -14,7 +14,7 @@ export const submitPrompt: SubmitPrompt<
     includeCTA: boolean;
     adjustForSocialMediaWebsite: string;
   },
-  { success: boolean; generationId?: string }
+  { success: false } | { success: true; generationId: string }
 > = async (args, context) => {
   try {
     const {
@@ -87,10 +87,7 @@ export const getResult: GetResult<
   };
 };
 
-export const getLatestResults: GetLatestResults<{}, Result[]> = async (
-  _args,
-  context
-) => {
+export const getLatestResults = (async (_args, context) => {
   const generations = await context.entities.Generation.findMany({
     where: {
       result: {
@@ -108,7 +105,7 @@ export const getLatestResults: GetLatestResults<{}, Result[]> = async (
     },
   });
   return generations.map((g) => g.result!);
-};
+}) satisfies GetLatestResults<{}>;
 
 function getResultSearchQuery(result: Result) {
   try {

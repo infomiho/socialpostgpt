@@ -21,10 +21,13 @@ import { ImageProviderLink } from "./components/ImageProviderLink";
 
 import { theme } from "./theme";
 
+import { Toaster } from "sonner";
+
 export function App({ children }: { children: JSX.Element }) {
   const { data: numberOfResults } = useQuery(getNumberOfResults);
   return (
     <ChakraProvider theme={theme}>
+      <Toaster position="top-right" richColors />
       <Container py={8} px={4} maxW="container.md">
         <VStack gap={4}>
           <Box mt={6} textAlign="center">

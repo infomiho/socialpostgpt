@@ -14,6 +14,7 @@ import {
   Heading,
   Hide,
   Select,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import submitPrompt from "@wasp/actions/submitPrompt";
@@ -24,11 +25,12 @@ import { useQuery } from "@wasp/queries";
 import getLatestResults from "@wasp/queries/getLatestResults";
 import { Result, Image as ImageEntity } from "@wasp/entities";
 import { socialMediaWebsites } from "@wasp/shared/socialMediaWebsites";
+import { toast } from "sonner";
 
 const MainPage = () => {
   const { data: latestResults } = useQuery(getLatestResults);
   const socialMediaWebsiteOptions = Object.values(socialMediaWebsites);
-  const { register, handleSubmit } = useForm<{
+  const { register, handleSubmit, formState } = useForm<{
     description: string;
     includeEmojis: boolean;
     includeHashtags: boolean;
@@ -42,6 +44,10 @@ const MainPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
     const result = await submitPrompt(data);
+    if (!result.success) {
+      toast.error("Something went wrong, please try again later.");
+      return;
+    }
     setGenerationId(result.generationId);
   });
 
@@ -58,11 +64,13 @@ const MainPage = () => {
     <VStack width="full" gap={20}>
       <form onSubmit={onSubmit} style={{ width: "100%" }}>
         <VStack p={4} gap={3}>
-          <FormControl>
-            <FormLabel>What is the post about</FormLabel>
+          <FormControl isInvalid={!!formState.errors.description}>
+            <FormLabel htmlFor="description">What is the post about</FormLabel>
             <Textarea
-              {...register("description")}
-              required
+              id="description"
+              {...register("description", {
+                required: "Please enter a description.",
+              })}
               placeholder="You could write something like: Company Super Shoes is promoting their newest line of flying shoes and they are looking to appeal to younger folks."
               height={150}
               size="lg"
@@ -71,6 +79,10 @@ const MainPage = () => {
               boxShadow="lg"
               backgroundColor="white"
             />
+            <FormErrorMessage>
+              {formState.errors.description &&
+                formState.errors.description.message}
+            </FormErrorMessage>
           </FormControl>
           <FormControl>
             <FormLabel>Adjust for</FormLabel>
