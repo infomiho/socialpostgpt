@@ -1,0 +1,26 @@
+name: Deploy to Caprover
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build-and-deploy:
+
+    permissions:
+      contents: read
+      packages: write
+
+    uses: wasp-lang/deploy-to-caprover-action/.github/workflows/deploy.yml@main
+    secrets:
+      CAPROVER_SERVER: ${{ secrets.CAPROVER_SERVER }}
+      SERVER_APP_NAME: ${{ secrets.SERVER_APP_NAME }}
+      SERVER_APP_TOKEN: ${{ secrets.SERVER_APP_TOKEN }}
+      CLIENT_APP_NAME: ${{ secrets.CLIENT_APP_NAME }}
+      CLIENT_APP_TOKEN: ${{ secrets.CLIENT_APP_TOKEN }}
+      SERVER_APP_URL: ${{ secrets.SERVER_APP_URL }}
+
+      DOCKER_REGISTRY: ghcr.io
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
