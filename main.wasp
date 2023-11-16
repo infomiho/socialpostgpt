@@ -2,6 +2,9 @@ app socialpostgpt {
   wasp: {
     version: "^0.11.0"
   },
+  head: [
+    "<script defer data-domain=\"socialpostgpt.xyz\" src=\"http://plausible.apps.twoducks.dev/js/script.js\"></script>"
+  ],
   title: "SocialPostGPT",
   client: {
     rootComponent: import { App } from "@client/App.tsx",
