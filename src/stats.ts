@@ -1,4 +1,4 @@
-import { GetNumberOfResults } from "@wasp/queries/types";
+import { type GetNumberOfResults } from "wasp/server/operations";
 
 export const getNumberOfResults: GetNumberOfResults<void, number> = async (
   _args,

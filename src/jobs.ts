@@ -1,8 +1,8 @@
+import { type Generation } from "wasp/entities";
 import { unsplash } from "./external/unsplash.js";
 import { pexels } from "./external/pexels.js";
 import { chatgpt } from "./external/chatgpt.js";
 import { ImageSearchResult, jobStatus } from "./types.js";
-import { Generation } from "@wasp/entities";
 
 export async function generateResultJob(
   args: { generationId: string },

@@ -1,3 +1,5 @@
+import { type Image as ImageEntity, type Result, type ImageAuthor, type Generation } from "wasp/entities";
+import { useQuery, getResult } from "wasp/client/operations";
 import {
   Box,
   Button,
@@ -11,14 +13,6 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
-import {
-  Image as ImageEntity,
-  Result,
-  ImageAuthor,
-  Generation,
-} from "@wasp/entities";
-import { useQuery } from "@wasp/queries";
-import getResult from "@wasp/queries/getResult";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ImageProviderLink } from "../components/ImageProviderLink";

@@ -1,3 +1,9 @@
+import { type Result, type Image as ImageEntity } from "wasp/entities";
+import {
+  submitPrompt,
+  useQuery,
+  getLatestResults,
+} from "wasp/client/operations";
 import {
   Button,
   FormControl,
@@ -17,14 +23,10 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import submitPrompt from "@wasp/actions/submitPrompt";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { useQuery } from "@wasp/queries";
-import getLatestResults from "@wasp/queries/getLatestResults";
-import { Result, Image as ImageEntity } from "@wasp/entities";
-import { socialMediaWebsites } from "@wasp/shared/socialMediaWebsites";
+import { socialMediaWebsites } from "../socialMediaWebsites";
 import { toast } from "sonner";
 
 const MainPage = () => {

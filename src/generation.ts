@@ -1,10 +1,17 @@
-import { SubmitPrompt } from "@wasp/actions/types";
-import { GetResult, GetLatestResults } from "@wasp/queries/types";
-import { Generation, Result, Image, ImageAuthor } from "@wasp/entities";
-
-import { generateResult } from "@wasp/jobs/generateResult.js";
-import { socialMediaWebsitesKeys } from "@wasp/shared/socialMediaWebsites.js";
-import HttpError from "@wasp/core/HttpError.js";
+import { generateResult } from "wasp/server/jobs";
+import {
+  type Generation,
+  type Result,
+  type Image,
+  type ImageAuthor,
+} from "wasp/entities";
+import { HttpError } from "wasp/server";
+import {
+  type SubmitPrompt,
+  type GetResult,
+  type GetLatestResults,
+} from "wasp/server/operations";
+import { socialMediaWebsitesKeys } from "./socialMediaWebsites.js";
 
 export const submitPrompt: SubmitPrompt<
   {

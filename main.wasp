@@ -1,66 +1,53 @@
 app socialpostgpt {
   wasp: {
-    version: "^0.11.0"
+    version: "^0.12.0"
   },
   head: [
     "<script defer data-domain=\"socialpostgpt.xyz\" src=\"http://plausible.apps.twoducks.dev/js/script.js\"></script>"
   ],
   title: "SocialPostGPT",
   client: {
-    rootComponent: import { App } from "@client/App.tsx",
+    rootComponent: import { App } from "@src/App.tsx",
   },
   db: {
     system: PostgreSQL,
   },
-  dependencies: [
-    ("unsplash-js", "7.0.15"),
-    ("chatgpt", "5.1.1"),
-    ("@chakra-ui/react", "^2.8.0"),
-    ("react-icons", "4.8.0"),
-    ("@emotion/react", "11.10.6"),
-    ("@emotion/styled", "11.10.6"),
-    ("framer-motion", "6.5.1"),
-    ("react-hook-form", "^7.45.4"),
-    ("@fontsource/inter", "4.5.15"),
-    ("pexels", "1.4.0"),
-    ("sonner", "^1.2.0")
-  ],
 }
 
 route RootRoute { path: "/", to: MainPage }
 page MainPage {
-  component: import Main from "@client/pages/MainPage.tsx"
+  component: import Main from "@src/pages/MainPage.tsx"
 }
 
 route ResultPage { path: "/:generationId", to: ResultPage }
 page ResultPage {
-  component: import Main from "@client/pages/ResultPage.tsx"
+  component: import Main from "@src/pages/ResultPage.tsx"
 }
 
 action submitPrompt {
-  fn: import { submitPrompt } from "@server/generation.js",
+  fn: import { submitPrompt } from "@src/generation.js",
   entities: [Generation]
 }
 
 query getResult {
-  fn: import { getResult } from "@server/generation.js",
+  fn: import { getResult } from "@src/generation.js",
   entities: [Generation]
 }
 
 query getLatestResults {
-  fn: import { getLatestResults } from "@server/generation.js",
+  fn: import { getLatestResults } from "@src/generation.js",
   entities: [Generation]
 }
 
 query getNumberOfResults {
-  fn: import { getNumberOfResults } from "@server/stats.js",
+  fn: import { getNumberOfResults } from "@src/stats.js",
   entities: [Result]
 }
 
 job generateResult {
   executor: PgBoss,
   perform: {
-    fn:  import { generateResultJob } from "@server/jobs.js",
+    fn:  import { generateResultJob } from "@src/jobs.js",
     executorOptions: {
       pgBoss: {=json { "retryLimit": 1 } json=}
     }

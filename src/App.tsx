@@ -1,3 +1,4 @@
+import { useQuery, getNumberOfResults } from "wasp/client/operations";
 import {
   ChakraProvider,
   Container,
@@ -13,9 +14,6 @@ import { Link as RouterLink } from "react-router-dom";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/900.css";
 import { AiFillGithub } from "react-icons/ai";
-
-import { useQuery } from "@wasp/queries";
-import getNumberOfResults from "@wasp/queries/getNumberOfResults";
 
 import { ImageProviderLink } from "./components/ImageProviderLink";
 
