@@ -1,6 +1,6 @@
 app socialpostgpt {
   wasp: {
-    version: "^0.12.0"
+    version: "^0.13.0"
   },
   head: [
     "<script defer data-domain=\"socialpostgpt.xyz\" src=\"http://plausible.apps.twoducks.dev/js/script.js\"></script>"
