@@ -1,6 +1,6 @@
 app socialpostgpt {
   wasp: {
-    version: "^0.13.0"
+    version: "^0.15.0"
   },
   head: [
     "<script defer data-domain=\"socialpostgpt.xyz\" src=\"http://plausible.apps.twoducks.dev/js/script.js\"></script>"
@@ -8,9 +8,6 @@ app socialpostgpt {
   title: "SocialPostGPT",
   client: {
     rootComponent: import { App } from "@src/App.tsx",
-  },
-  db: {
-    system: PostgreSQL,
   },
 }
 
@@ -54,42 +51,3 @@ job generateResult {
   },
   entities: [Generation],
 }
-
-entity Generation {=psl
-  id String @id @unique @default(uuid())
-  prompt String
-  options String @default("")
-  status String @default("pending")
-  retryTimes Int @default(0)
-  createdAt DateTime @default(now())
-  resultId String?
-  result Result?
-psl=}
-
-entity Result {=psl
-  id String @id @unique @default(uuid())
-  description String
-  searchQuery String
-  images Image[]
-  generationId String @unique
-  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
-psl=}
-
-entity Image {=psl
-  id String @id @unique @default(uuid())
-  url String
-  downloadUrl String @default("")
-  providerId String
-  provider String
-  authorId String
-  author ImageAuthor @relation(fields: [authorId], references: [id])
-  resultId String
-  result Result @relation(fields: [resultId], references: [id])
-psl=}
-
-entity ImageAuthor {=psl
-  id String @id @unique @default(uuid())
-  name String
-  url String
-  images Image[]
-psl=}

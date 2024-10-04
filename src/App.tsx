@@ -10,7 +10,7 @@ import {
   Icon,
   Flex,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { Outlet, Link as RouterLink } from "react-router-dom";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/900.css";
 import { AiFillGithub } from "react-icons/ai";
@@ -21,7 +21,7 @@ import { theme } from "./theme";
 
 import { Toaster } from "sonner";
 
-export function App({ children }: { children: JSX.Element }) {
+export function App() {
   const { data: numberOfResults } = useQuery(getNumberOfResults);
   return (
     <ChakraProvider theme={theme}>
@@ -66,7 +66,7 @@ export function App({ children }: { children: JSX.Element }) {
               Just provide it with a brief and see the magic happen!
             </Heading>
           </Box>
-          {children}
+          <Outlet />
           <VStack alignItems="center">
             <p>
               Powered by{" "}

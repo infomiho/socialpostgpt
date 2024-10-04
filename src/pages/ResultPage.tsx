@@ -1,4 +1,9 @@
-import { type Image as ImageEntity, type Result, type ImageAuthor, type Generation } from "wasp/entities";
+import {
+  type Image as ImageEntity,
+  type Result,
+  type ImageAuthor,
+  type Generation,
+} from "wasp/entities";
 import { useQuery, getResult } from "wasp/client/operations";
 import {
   Box,
@@ -25,7 +30,7 @@ const ResultPage = () => {
   >(null);
   const { data: result, isLoading } = useQuery(
     getResult,
-    { generationId },
+    { generationId: generationId as string },
     { enabled: !!generationId && !isFetched, refetchInterval: 3000 }
   );
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

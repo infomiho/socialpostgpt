@@ -25,7 +25,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { socialMediaWebsites } from "../socialMediaWebsites";
 import { toast } from "sonner";
 
@@ -41,7 +41,7 @@ const MainPage = () => {
   }>();
   const [isLoading, setIsLoading] = useState(false);
   const [generationId, setGenerationId] = useState<string | null>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
@@ -58,7 +58,7 @@ const MainPage = () => {
       return;
     }
     setTimeout(() => {
-      history.push(`/${generationId}`);
+      navigate(`/${generationId}`);
     }, 1000);
   }, [generationId]);
 

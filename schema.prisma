@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Generation {
+  id         String   @id @unique @default(uuid())
+  prompt     String
+  options    String   @default("")
+  status     String   @default("pending")
+  retryTimes Int      @default(0)
+  createdAt  DateTime @default(now())
+  resultId   String?
+  result     Result?
+}
+
+model Result {
+  id           String     @id @unique @default(uuid())
+  description  String
+  searchQuery  String
+  images       Image[]
+  generationId String     @unique
+  generation   Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+}
+
+model Image {
+  id          String      @id @unique @default(uuid())
+  url         String
+  downloadUrl String      @default("")
+  providerId  String
+  provider    String
+  authorId    String
+  author      ImageAuthor @relation(fields: [authorId], references: [id])
+  resultId    String
+  result      Result      @relation(fields: [resultId], references: [id])
+}
+
+model ImageAuthor {
+  id     String  @id @unique @default(uuid())
+  name   String
+  url    String
+  images Image[]
+}
