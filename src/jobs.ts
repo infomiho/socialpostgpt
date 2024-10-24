@@ -114,15 +114,11 @@ following content "${prompt}".
 
 Generate a search query that can be typed into Unsplash.com to find photos that match the prompt.
 
-Next to the search query, also include a catchy social media post content that can be used along with the photos.
-
-Respond only with JSON that looks like this: { "query": "some search query", "content": "some catchy post content" }`;
+Next to the search query, also include a catchy social media post content that can be used along with the photos.`;
 
 const getPromptV2 = (
   prompt: string
-) => `You must respond ONLY with JSON that looks like this: \`\`\`{ "query": "some search query", "content": "some catchy post content", hashtags: ["one", "two"]}\`\`\` and no extra text.
-
-Generate a search query that can be typed into stock photo websites that will find photos that fit the following content "${prompt}". Use generic words which are more likely to get results on the stock photos website. Put in the "query" field.
+) => `Generate a search query that can be typed into stock photo websites that will find photos that fit the following content "${prompt}". Use generic words which are more likely to get results on the stock photos website. Put in the "query" field.
 
 Write a professional and modern social media post content that can be used along with the photos. Include hashtags and emojis if appropriate. Put it in the "content" field.
 
@@ -145,9 +141,8 @@ const getPromptV3 = (prompt: string, options: GenerationOptions) => {
       ? ` optimized for ${options.adjustForSocialMediaWebsite}`
       : "";
   return `You are a creative agency writer and are composing a social media post${websiteAdjustment} about "${prompt}". Write an engaging and professional post and find photos that fit the content.
-Generate a 2 search queries to search for photos that fit the content. Be creative to get good stock photos. Two queries should be different. Put in the "queries" field.
-Write the post content. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.
-You must respond ONLY with JSON that looks like this: { "queries": ["some search query", "other search query"], "content": "some catchy post content"} and no extra text. Escape quotes with backslash.`;
+Think of 2 search queries to search for photos that fit the content. Be creative to get good stock photos. Two queries should be different. Put in the "queries" field.
+Write the post content. ${hashtagsPart} ${emojisPart} ${ctaPart} Put it in the "content" field.`;
 };
 
 type GenerationOptions = {
