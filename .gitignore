@@ -2,3 +2,4 @@
 /.env.server
 /.env.client
 /node_modules
+/.env.caprover
