@@ -1,4 +1,4 @@
-import { App } from "wasp-config";
+import { App, type ExtImport } from "wasp-config";
 
 const app = new App("socialpostgpt", {
   title: "SocialPostGPT",
@@ -14,15 +14,15 @@ app.client({
   rootComponent: { import: "App", from: "@src/App" },
 });
 
-const mainPage = app.page("MainPage", {
-  component: { importDefault: "MainPage", from: "@src/pages/MainPage" },
+defineRoute("MainPage", "/", {
+  importDefault: "MainPage",
+  from: "@src/pages/MainPage",
 });
-app.route("MainPage", { path: "/", to: mainPage });
 
-const resultPage = app.page("ResultPage", {
-  component: { importDefault: "ResultPage", from: "@src/pages/ResultPage" },
+defineRoute("ResultPage", "/:generationId", {
+  importDefault: "ResultPage",
+  from: "@src/pages/ResultPage",
 });
-app.route("ResultPage", { path: "/:generationId", to: resultPage });
 
 app.action("submitPrompt", {
   fn: { import: "submitPrompt", from: "@src/generation" },
@@ -56,3 +56,8 @@ app.job("generateResult", {
 });
 
 export default app;
+
+function defineRoute(name: string, path: string, component: ExtImport) {
+  const page = app.page(name, { component });
+  app.route(name, { path, to: page });
+}
