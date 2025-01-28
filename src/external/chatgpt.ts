@@ -1,7 +1,8 @@
 import { ChatGPTAPI } from "chatgpt";
+import { env } from "wasp/server";
 
 const api = new ChatGPTAPI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey: env.OPENAI_API_KEY,
 });
 
 export const chatgpt = {

@@ -14,6 +14,10 @@ app.client({
   rootComponent: { import: "App", from: "@src/App" },
 });
 
+app.server({
+  envValidationSchema: { import: "serverEnvSchema", from: "@src/env" },
+});
+
 defineRoute("MainPage", "/", {
   importDefault: "MainPage",
   from: "@src/pages/MainPage",

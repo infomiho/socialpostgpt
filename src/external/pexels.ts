@@ -1,7 +1,8 @@
 import { createClient } from "pexels";
 import { ImageSearchAPI } from "../types.js";
+import { env } from "wasp/server";
 
-const client = createClient(process.env.PEXELS_API_KEY!);
+const client = createClient(env.PEXELS_API_KEY);
 
 export const pexels: ImageSearchAPI = {
   async search(query: string) {

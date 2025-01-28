@@ -1,8 +1,9 @@
 import { createApi } from "unsplash-js";
 import type { ImageSearchAPI } from "../types.js";
+import { env } from "wasp/server";
 
 const api = createApi({
-  accessKey: process.env.UNSPLASH_ACCESS_KEY!,
+  accessKey: env.UNSPLASH_ACCESS_KEY,
 });
 
 export const unsplash: ImageSearchAPI = {
