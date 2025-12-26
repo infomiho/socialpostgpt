@@ -1,6 +1,10 @@
 {
   "name": "socialpostgpt",
   "type": "module",
+  "workspaces": [
+    ".wasp/build/*",
+    ".wasp/out/*"
+  ],
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "11.10.6",
@@ -9,8 +13,8 @@
     "chatgpt": "5.1.1",
     "framer-motion": "6.5.1",
     "pexels": "1.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "react-hook-form": "^7.45.4",
     "react-icons": "4.8.0",
     "react-router-dom": "^6.26.2",
@@ -19,10 +23,11 @@
     "wasp": "file:.wasp/out/sdk/wasp"
   },
   "devDependencies": {
-    "@types/react": "^18.0.37",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "prisma": "5.19.1",
-    "typescript": "^5.1.0",
-    "vite": "^4.3.9",
-    "wasp-config": "file:../../.local/share/wasp-lang/0.16.0-rc2/data/packages/wasp-config"
+    "typescript": "5.8.2",
+    "vite": "^7.0.6",
+    "wasp-config": "file:../../.local/share/wasp-lang/0.20.0/data/packages/wasp-config"
   }
 }

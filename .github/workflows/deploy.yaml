@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  WASP_VERSION: "0.16.0-rc2"
+  WASP_VERSION: "0.20.0"
   # Put your server app name here
   SERVER_APP_NAME: ${{ secrets.SERVER_APP_NAME }}
   # After you know the server URL, put the URL here
@@ -33,7 +33,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3

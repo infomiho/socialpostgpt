@@ -9,7 +9,7 @@ import {
   Box,
   Button,
   HStack,
-  Image,
+  Image as ChakraImage,
   Link,
   Spinner,
   Text,
@@ -54,6 +54,26 @@ const ResultPage = () => {
     );
   }
 
+  function preloadImage(imageUrl: string) {
+    const img = new Image();
+    img.src = imageUrl;
+  }
+
+  function preloadAdjacentImages() {
+    if (!result?.result?.images || result.result.images.length <= 1) return;
+
+    const prevIndex =
+      (currentImageIndex + result.result.images.length - 1) %
+      result.result.images.length;
+    const nextIndex = (currentImageIndex + 1) % result.result.images.length;
+
+    const prevImageUrl = result.result.images[prevIndex].url;
+    const nextImageUrl = result.result.images[nextIndex].url;
+
+    preloadImage(prevImageUrl);
+    preloadImage(nextImageUrl);
+  }
+
   useEffect(() => {
     if (result?.result) {
       setIsFetched(true);
@@ -63,6 +83,7 @@ const ResultPage = () => {
   useEffect(() => {
     if (result?.result?.images) {
       setCurrentImage(result.result.images[currentImageIndex]);
+      preloadAdjacentImages();
     }
   }, [result, currentImageIndex]);
 
@@ -121,7 +142,7 @@ const ResultPage = () => {
               <Box>
                 <Box style={{ position: "relative" }} my={2}>
                   <AspectRatio ratio={16 / 9}>
-                    <Image
+                    <ChakraImage
                       src={currentImage.url}
                       alt={result.result.searchQuery}
                       objectFit="cover"

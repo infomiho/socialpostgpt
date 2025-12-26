@@ -3,10 +3,10 @@ import { App, type ExtImport } from "wasp-config";
 const app = new App("socialpostgpt", {
   title: "SocialPostGPT",
   wasp: {
-    version: "^0.16.0",
+    version: "^0.20.0",
   },
   head: [
-    `<script defer data-domain="socialpostgpt.xyz" src="http://plausible.apps.twoducks.dev/js/script.js"></script>`,
+    `<script defer src="https://umami.apps.twoducks.dev/script.js" data-website-id="8ac39f7c-622a-4467-8bc8-c970441fbdad"></script>`,
   ],
 });
 
