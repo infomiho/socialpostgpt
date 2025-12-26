@@ -21,6 +21,7 @@ import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ImageProviderLink } from "../components/ImageProviderLink";
+import { trackEvent } from "../stats";
 
 const ResultPage = () => {
   const { generationId } = useParams<{ generationId: string }>();
@@ -31,7 +32,7 @@ const ResultPage = () => {
   const { data: result, isLoading } = useQuery(
     getResult,
     { generationId: generationId as string },
-    { enabled: !!generationId && !isFetched, refetchInterval: 3000 }
+    { enabled: !!generationId && !isFetched, refetchInterval: 3000 },
   );
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -39,8 +40,9 @@ const ResultPage = () => {
     if (!result?.result?.images) {
       return;
     }
+    trackEvent("image_navigate", { direction: "next" });
     setCurrentImageIndex(
-      (currentImageIndex + 1) % result.result?.images.length
+      (currentImageIndex + 1) % result.result?.images.length,
     );
   }
 
@@ -48,9 +50,10 @@ const ResultPage = () => {
     if (!result?.result?.images) {
       return;
     }
+    trackEvent("image_navigate", { direction: "previous" });
     setCurrentImageIndex(
       (currentImageIndex + result.result.images.length - 1) %
-        result.result.images.length
+        result.result.images.length,
     );
   }
 
@@ -77,8 +80,16 @@ const ResultPage = () => {
   useEffect(() => {
     if (result?.result) {
       setIsFetched(true);
+      trackEvent("generation_complete", {
+        generationId: result?.result.id,
+        imageCount: result.result.images?.length || 0,
+      });
+    } else if (result?.status === "failed" && generationId) {
+      trackEvent("generation_failed", {
+        generationId: generationId,
+      });
     }
-  }, [result]);
+  }, [result, generationId]);
 
   useEffect(() => {
     if (result?.result?.images) {
@@ -177,6 +188,11 @@ const ResultPage = () => {
                         bottom: "0.5rem",
                         right: "0.5rem",
                       }}
+                      onClick={() =>
+                        trackEvent("image_download", {
+                          provider: currentImage.provider,
+                        })
+                      }
                     >
                       <a href={currentImage.downloadUrl} target="_blank">
                         Download

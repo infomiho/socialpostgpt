@@ -28,6 +28,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { socialMediaWebsites } from "../socialMediaWebsites";
 import { toast } from "sonner";
+import { trackEvent } from "../stats";
 
 const MainPage = () => {
   const { data: latestResults } = useQuery(getLatestResults);
@@ -44,9 +45,17 @@ const MainPage = () => {
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (data) => {
+    trackEvent('generation_start', {
+      platform: data.adjustForSocialMediaWebsite,
+      includeEmojis: data.includeEmojis,
+      includeHashtags: data.includeHashtags,
+      includeCTA: data.includeCTA,
+    });
+
     setIsLoading(true);
     const result = await submitPrompt(data);
     if (!result.success) {
+      trackEvent('generation_error', { platform: data.adjustForSocialMediaWebsite, error_type: 'submit_failed' });
       toast.error("Something went wrong, please try again later.");
       return;
     }
