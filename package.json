@@ -10,7 +10,7 @@
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@fontsource/inter": "4.5.15",
-    "chatgpt": "5.1.1",
+    "openai": "^4.76.1",
     "framer-motion": "6.5.1",
     "pexels": "1.4.0",
     "react": "^19.2.1",

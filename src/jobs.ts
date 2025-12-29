@@ -6,7 +6,7 @@ import { ImageSearchResult, jobStatus } from "./types.js";
 
 export async function generateResultJob(
   args: { generationId: string },
-  context: any
+  context: any,
 ) {
   const { generationId } = args;
   console.log("[job] Processing generation", generationId);
@@ -89,7 +89,7 @@ type ChatGPTResponse = {
 
 async function getResultFromGPT(
   userPrompt: string,
-  options: GenerationOptions
+  options: GenerationOptions,
 ): Promise<ChatGPTResponse> {
   const prompt = getPromptV3(userPrompt, options);
 
@@ -102,13 +102,13 @@ async function getResultFromGPT(
     return parsedResult;
   } catch (error) {
     throw new Error(
-      `Invalid response from ChatGPT. Expected JSON, got: ${result.text}`
+      `Invalid response from ChatGPT. Expected JSON, got: ${result.text}`,
     );
   }
 }
 
 const getPromptV1 = (
-  prompt: string
+  prompt: string,
 ) => `Generate photo ideas for a social media post with the
 following content "${prompt}".
 
@@ -117,7 +117,7 @@ Generate a search query that can be typed into Unsplash.com to find photos that 
 Next to the search query, also include a catchy social media post content that can be used along with the photos.`;
 
 const getPromptV2 = (
-  prompt: string
+  prompt: string,
 ) => `Generate a search query that can be typed into stock photo websites that will find photos that fit the following content "${prompt}". Use generic words which are more likely to get results on the stock photos website. Put in the "query" field.
 
 Write a professional and modern social media post content that can be used along with the photos. Include hashtags and emojis if appropriate. Put it in the "content" field.
@@ -181,14 +181,15 @@ async function getStockPhotos(queries: string[]): Promise<ImageSearchResult[]> {
   }
 
   return sortImages(
-    uniqueImages(availableResults.map((result) => result!.slice(0, 2)).flat())
+    uniqueImages(availableResults.map((result) => result!.slice(0, 2)).flat()),
   );
 }
 
 // Generate unique array of ImageSearchResult by url field
 function uniqueImages(images: ImageSearchResult[]): ImageSearchResult[] {
   const unique = images.filter(
-    (image, index, self) => index === self.findIndex((t) => t.url === image.url)
+    (image, index, self) =>
+      index === self.findIndex((t) => t.url === image.url),
   );
   return unique;
 }
