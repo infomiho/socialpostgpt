@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ImageProviderLink } from "../components/ImageProviderLink";
 import { trackEvent } from "../stats";
+import { useTextSelectionTracking } from "../hooks/useTextSelectionTracking";
 
 const ResultPage = () => {
   const { generationId } = useParams<{ generationId: string }>();
@@ -35,6 +36,8 @@ const ResultPage = () => {
     { enabled: !!generationId && !isFetched, refetchInterval: 3000 },
   );
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useTextSelectionTracking(result?.result?.id);
 
   function nextImage() {
     if (!result?.result?.images) {
